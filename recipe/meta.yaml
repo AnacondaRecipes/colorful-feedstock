@@ -1,30 +1,39 @@
-{% set version = "0.5.4" %}
+{% set name = "colorful" %}
+{% set version = "0.5.8" %}
 
 package:
-  name: colorful
+  name: {{ name }}
   version: {{ version }}
 
 source:
-  url: https://github.com/timofurrer/colorful/archive/v{{ version }}.zip
-  sha256: 35a7480b1abfcd1306188e8aa82edf5c6dcff5cefb697e04f9126b8fa6e4635f 
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{version}}.tar.gz
+  sha256: bb16502b198be2f1c42ba3c52c703d5f651d826076817185f0294c1a549a7445 
 
 build:
-  noarch: python
   number: 0
-  script: {{ PYTHON }} -m pip install . --no-deps -vv
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vv
 
-# Need these up here for conda-smithy to handle them properly.
 requirements:
   host:
-    - python >=3.4
     - pip
+    - python
+    - wheel
+    - setuptools
   run:
-    - python >=3.4
-    - colorama
+    - python
+    - colorama  # [win]
     
 test:
+  source_files:
+    - tests
   imports:
     - colorful
+  commands:
+    - pip check
+    - pytest -v tests
+  requires:
+    - pip
+    - pytest
 
 about:
   home: http://github.com/timofurrer/colorful
@@ -45,7 +54,6 @@ about:
       * support len() on colored strings
       * support color names from X11 rgb.txt
       * no dependencies
-
   doc_url: https://github.com/timofurrer/colorful
   dev_url: https://github.com/timofurrer/colorful
 
